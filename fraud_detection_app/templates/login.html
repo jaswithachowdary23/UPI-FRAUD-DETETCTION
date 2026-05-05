@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Login | ShieldPay AI{% endblock %}
+{% block auth_content %}
+<section class="auth-card-grid">
+    <div class="hero-card">
+        <span class="hero-badge">ML + Real-Time Banking Demo</span>
+        <h1>Fraud Detection Website</h1>
+        <p>
+            Check transactions instantly, monitor fraud trends, explain risky behavior,
+            and review your transaction history in one analyst-friendly workspace.
+        </p>
+        <ul class="hero-list">
+            <li>Random Forest + XGBoost scoring</li>
+            <li>Risk score, confidence, and explainable AI reasons</li>
+            <li>Dashboard, alerts, history, and performance metrics</li>
+        </ul>
+        <div class="demo-note">
+            <strong>Demo account:</strong> demo / demo123
+        </div>
+    </div>
+    <div class="auth-card">
+        <h2>Sign in</h2>
+        <form method="post" class="auth-form">
+            <label>
+                Username
+                <input type="text" name="username" placeholder="Enter username" required />
+            </label>
+            <label>
+                Password
+                <input type="password" name="password" placeholder="Enter password" required />
+            </label>
+            <button type="submit" class="primary-btn full-width">Login</button>
+        </form>
+        <p class="auth-switch">New user? <a href="{{ url_for('register') }}">Create an account</a></p>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Register | ShieldPay AI{% endblock %}
+{% block auth_content %}
+<section class="auth-card-grid single-card-grid">
+    <div class="auth-card auth-card-large">
+        <h2>Create account</h2>
+        <p class="muted-text">Each user sees only their own transactions, alerts, and history.</p>
+        <form method="post" class="auth-form">
+            <label>
+                Username
+                <input type="text" name="username" placeholder="Choose a username" required />
+            </label>
+            <label>
+                Password
+                <input type="password" name="password" placeholder="Minimum 6 characters" required />
+            </label>
+            <label>
+                Confirm Password
+                <input type="password" name="confirm_password" placeholder="Re-enter password" required />
+            </label>
+            <button type="submit" class="primary-btn full-width">Create account</button>
+        </form>
+        <p class="auth-switch">Already have an account? <a href="{{ url_for('login') }}">Sign in</a></p>
+    </div>
+</section>
+{% endblock %}

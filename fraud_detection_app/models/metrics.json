@@ -1,0 +1,43 @@
+{
+  "dataset_size": 8000,
+  "fraud_rate": 0.2895,
+  "best_model": "Random Forest",
+  "models": {
+    "Random Forest": {
+      "name": "Random Forest",
+      "accuracy": 0.844375,
+      "precision": 0.7219917012448133,
+      "recall": 0.7516198704103672,
+      "f1": 0.7365079365079366,
+      "confusion_matrix": [
+        [
+          1003,
+          134
+        ],
+        [
+          115,
+          348
+        ]
+      ],
+      "positive_rate": 0.35969988537982095
+    },
+    "XGBoost": {
+      "name": "XGBoost",
+      "accuracy": 0.844375,
+      "precision": 0.7597087378640777,
+      "recall": 0.6760259179265659,
+      "f1": 0.7154285714285714,
+      "confusion_matrix": [
+        [
+          1038,
+          99
+        ],
+        [
+          150,
+          313
+        ]
+      ],
+      "positive_rate": 0.2931390106678009
+    }
+  }
+}

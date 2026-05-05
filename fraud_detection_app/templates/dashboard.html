@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard | ShieldPay AI{% endblock %}
+{% block page_heading %}Fraud Risk Dashboard{% endblock %}
+{% block page_subheading %}Monitor transaction volume, fraud trends, and user behavior patterns{% endblock %}
+{% block content %}
+<section class="summary-row">
+    <article class="stat-card">
+        <span>Total transactions</span>
+        <strong>{{ summary.total }}</strong>
+    </article>
+    <article class="stat-card danger-card">
+        <span>Fraud detected</span>
+        <strong>{{ summary.fraud_count }}</strong>
+    </article>
+    <article class="stat-card success-card">
+        <span>Safe transactions</span>
+        <strong>{{ summary.safe_count }}</strong>
+    </article>
+    <article class="stat-card accent-card">
+        <span>Fraud percentage</span>
+        <strong>{{ summary.fraud_percentage }}%</strong>
+    </article>
+</section>
+
+<div class="grid two-column-grid">
+    <section class="panel">
+        <div class="panel-header">
+            <h2>Fraud vs Safe</h2>
+            <p>Pie chart of all scored transactions.</p>
+        </div>
+        <canvas id="predictionPieChart" class="chart-canvas" data-chart='{{ {"labels": summary.prediction_labels, "values": summary.prediction_values, "type": "pie"}|tojson }}'></canvas>
+    </section>
+    <section class="panel">
+        <div class="panel-header">
+            <h2>Transactions by type</h2>
+            <p>Bar chart showing where activity is concentrated.</p>
+        </div>
+        <canvas id="typeBarChart" class="chart-canvas" data-chart='{{ {"labels": summary.type_labels, "values": summary.type_values, "type": "bar"}|tojson }}'></canvas>
+    </section>
+</div>
+
+<div class="grid two-column-grid narrow-gap">
+    <section class="panel">
+        <div class="panel-header">
+            <h2>Activity timeline</h2>
+            <p>Daily transaction count trend.</p>
+        </div>
+        <canvas id="dailyLineChart" class="chart-canvas" data-chart='{{ {"labels": summary.daily_labels, "values": summary.daily_values, "type": "line"}|tojson }}'></canvas>
+    </section>
+    <section class="panel compact-panel">
+        <div class="panel-header">
+            <h2>User behavior tracking</h2>
+            <p>Behavior baselines used to detect anomalies in real time.</p>
+        </div>
+        <div class="behavior-grid">
+            <div>
+                <span>Usual spending range</span>
+                <strong>{{ behavior.usual_spending_range }}</strong>
+            </div>
+            <div>
+                <span>Common locations</span>
+                <strong>{{ behavior.common_locations|join(', ') if behavior.common_locations else 'N/A' }}</strong>
+            </div>
+            <div>
+                <span>Active hours</span>
+                <strong>{{ behavior.active_hours }}</strong>
+            </div>
+            <div>
+                <span>Last seen</span>
+                <strong>{{ behavior.last_seen }}</strong>
+            </div>
+        </div>
+        <div class="info-banner muted-banner">
+            <strong>Real-time feasibility:</strong> the backend auto-generates amount deviation, location novelty,
+            transaction frequency, travel velocity, and time-gap features before every prediction.
+        </div>
+    </section>
+</div>
+{% endblock %}

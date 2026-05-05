@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}History | ShieldPay AI{% endblock %}
+{% block page_heading %}Transaction History{% endblock %}
+{% block page_subheading %}Review all predictions, risk scores, and the strongest explainability signals{% endblock %}
+{% block content %}
+<section class="panel">
+    <div class="panel-header history-header">
+        <div>
+            <h2>Prediction log</h2>
+            <p>Every scored transaction is stored in SQLite, making the project feel like a real banking workflow.</p>
+        </div>
+        <input type="text" id="historySearch" class="search-input" placeholder="Filter by amount, location, prediction, or type" />
+    </div>
+    <div class="table-wrapper">
+        <table class="data-table" id="historyTable">
+            <thead>
+                <tr>
+                    <th>Date & time</th>
+                    <th>Amount</th>
+                    <th>Type</th>
+                    <th>Location</th>
+                    <th>Prediction</th>
+                    <th>Risk</th>
+                    <th>Confidence</th>
+                    <th>Top reason</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                <tr>
+                    <td>{{ row.created_at.replace('T', ' ')[:19] }}</td>
+                    <td>₹{{ '{:,.0f}'.format(row.amount) }}</td>
+                    <td>{{ row.transaction_type }}</td>
+                    <td>{{ row.location }}</td>
+                    <td><span class="pill {{ 'pill-danger' if row.prediction == 'Fraud' else 'pill-success' }}">{{ row.prediction }}</span></td>
+                    <td>{{ row.risk_score }}%</td>
+                    <td>{{ row.confidence }}%</td>
+                    <td>{{ row.reasons[0].reason if row.reasons else 'Behavior matches normal pattern' }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="8">No transactions available yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

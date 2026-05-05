@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}Model Performance | ShieldPay AI{% endblock %}
+{% block page_heading %}Model Performance{% endblock %}
+{% block page_subheading %}Academic validation for the trained Random Forest and XGBoost models{% endblock %}
+{% block content %}
+<section class="summary-row">
+    <article class="stat-card accent-card">
+        <span>Dataset size</span>
+        <strong>{{ metrics.dataset_size }}</strong>
+    </article>
+    <article class="stat-card">
+        <span>Fraud rate in training data</span>
+        <strong>{{ (metrics.fraud_rate * 100)|round(2) }}%</strong>
+    </article>
+    <article class="stat-card success-card">
+        <span>Best model</span>
+        <strong>{{ metrics.best_model }}</strong>
+    </article>
+</section>
+
+<div class="grid two-column-grid">
+    {% for name, stat in metrics.models.items() %}
+    <section class="panel compact-panel">
+        <div class="panel-header">
+            <h2>{{ name }}</h2>
+            <p>{{ 'Selected for live scoring' if name == metrics.best_model else 'Benchmark model for comparison' }}</p>
+        </div>
+        <div class="metric-grid">
+            <div><span>Accuracy</span><strong>{{ (stat.accuracy * 100)|round(2) }}%</strong></div>
+            <div><span>Precision</span><strong>{{ (stat.precision * 100)|round(2) }}%</strong></div>
+            <div><span>Recall</span><strong>{{ (stat.recall * 100)|round(2) }}%</strong></div>
+            <div><span>F1 Score</span><strong>{{ (stat.f1 * 100)|round(2) }}%</strong></div>
+        </div>
+    </section>
+    {% endfor %}
+</div>
+
+<div class="grid two-column-grid narrow-gap">
+    <section class="panel">
+        <div class="panel-header">
+            <h2>Confusion matrix</h2>
+            <p>Saved from the best-performing model after evaluation.</p>
+        </div>
+        <img src="{{ url_for('static', filename='confusion_matrix_best.png') }}" alt="Confusion Matrix" class="confusion-image" />
+    </section>
+    <section class="panel compact-panel">
+        <div class="panel-header">
+            <h2>Why this is feasible in real time</h2>
+            <p>Fast tree-based models are suitable for low-latency financial scoring.</p>
+        </div>
+        <ul class="bullet-list">
+            <li>Inference uses pre-trained Random Forest and XGBoost models.</li>
+            <li>Feature engineering is lightweight and computed from user history on each request.</li>
+            <li>Prediction endpoint is available at <code>/api/predict</code> for frontend or future integration.</li>
+            <li>SQLite stores transaction outcomes immediately for dashboards and audit history.</li>
+        </ul>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Fraud Detection Platform{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head>
+<body>
+    {% if g.user %}
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div>
+                <div class="brand">ShieldPay AI</div>
+                <p class="brand-subtitle">Real-time fraud detection analyst workspace</p>
+            </div>
+            <nav class="nav-links">
+                <a href="{{ url_for('index') }}" class="{% if request.endpoint == 'index' %}active{% endif %}">Transaction Checker</a>
+                <a href="{{ url_for('dashboard') }}" class="{% if request.endpoint == 'dashboard' %}active{% endif %}">Fraud Risk Dashboard</a>
+                <a href="{{ url_for('history') }}" class="{% if request.endpoint == 'history' %}active{% endif %}">Transaction History</a>
+                <a href="{{ url_for('performance') }}" class="{% if request.endpoint == 'performance' %}active{% endif %}">Model Performance</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-card">
+                    <span>Logged in as</span>
+                    <strong>{{ g.user['username'] }}</strong>
+                </div>
+                <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
+            </div>
+        </aside>
+        <main class="content-area">
+            <header class="page-header">
+                <div>
+                    <h1>{% block page_heading %}Fraud Detection Platform{% endblock %}</h1>
+                    <p>{% block page_subheading %}Bank-grade screening for risky transactions{% endblock %}</p>
+                </div>
+                <div class="status-chip">Live scoring • {{ model_service.best_model_name if model_service is defined else 'ML Enabled' }}</div>
+            </header>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-stack">
+                        {% for category, message in messages %}
+                            <div class="flash flash-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+    {% else %}
+    <main class="auth-shell">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-stack auth-flash-stack">
+                    {% for category, message in messages %}
+                        <div class="flash flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        {% block auth_content %}{% endblock %}
+    </main>
+    {% endif %}
+    <script src="{{ url_for('static', filename='charts.js') }}"></script>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

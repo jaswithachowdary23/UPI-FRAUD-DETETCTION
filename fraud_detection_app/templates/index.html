@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% block title %}Transaction Checker | ShieldPay AI{% endblock %}
+{% block page_heading %}Real-Time Transaction Checker{% endblock %}
+{% block page_subheading %}Enter transaction details and score them instantly with explainable ML{% endblock %}
+{% block content %}
+<div class="grid two-column-grid">
+    <section class="panel">
+        <div class="panel-header">
+            <h2>Enter transaction details</h2>
+            <p>User-friendly inputs only. Derived risk features are generated automatically in the backend.</p>
+        </div>
+        <form id="predict-form" class="form-grid">
+            <label>
+                Transaction Amount (₹)
+                <input type="number" name="amount" step="0.01" min="1" placeholder="5000" required />
+            </label>
+            <label>
+                Transaction Type
+                <select name="transaction_type" required>
+                    {% for item in transaction_types %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
+                </select>
+            </label>
+            <label>
+                Location
+                <select name="location" required>
+                    {% for item in available_locations %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
+                </select>
+            </label>
+            <label>
+                Transaction Mode
+                <select name="transaction_mode" required>
+                    {% for item in transaction_modes %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
+                </select>
+            </label>
+            <label>
+                Device Type
+                <select name="device_type" required>
+                    {% for item in device_types %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
+                </select>
+            </label>
+            <label>
+                Merchant Category
+                <select name="merchant_category" required>
+                    {% for item in merchant_categories %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
+                </select>
+            </label>
+            <label>
+                Age Group
+                <select name="age_group" required>
+                    {% for item in age_groups %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
+                </select>
+            </label>
+            <label>
+                Transaction Time
+                <input type="datetime-local" name="timestamp" />
+            </label>
+            <div class="form-actions">
+                <button type="submit" class="primary-btn">Check transaction</button>
+            </div>
+        </form>
+    </section>
+
+    <section class="panel" id="prediction-panel">
+        <div class="panel-header">
+            <h2>Prediction result</h2>
+            <p>The result card updates live after each transaction check.</p>
+        </div>
+        <div id="prediction-placeholder" class="empty-state">
+            <div class="empty-icon">🔍</div>
+            <h3>No transaction scored yet</h3>
+            <p>Submit the form to see fraud risk score, confidence, alerts, and explainable AI reasons.</p>
+        </div>
+        <div id="prediction-result" class="hidden"></div>
+    </section>
+</div>
+
+<section class="summary-row">
+    <article class="stat-card">
+        <span>Total transactions</span>
+        <strong id="summary-total">{{ summary.total }}</strong>
+    </article>
+    <article class="stat-card danger-card">
+        <span>Fraud detected</span>
+        <strong id="summary-fraud">{{ summary.fraud_count }}</strong>
+    </article>
+    <article class="stat-card success-card">
+        <span>Safe transactions</span>
+        <strong id="summary-safe">{{ summary.safe_count }}</strong>
+    </article>
+    <article class="stat-card accent-card">
+        <span>Fraud percentage</span>
+        <strong id="summary-percent">{{ summary.fraud_percentage }}%</strong>
+    </article>
+</section>
+
+<div class="grid two-column-grid narrow-gap">
+    <section class="panel compact-panel">
+        <div class="panel-header">
+            <h2>User behavior snapshot</h2>
+            <p>Simple behavior tracking that flags unusual transactions.</p>
+        </div>
+        <div class="behavior-grid">
+            <div>
+                <span>Usual spending range</span>
+                <strong>{{ behavior.usual_spending_range }}</strong>
+            </div>
+            <div>
+                <span>Common locations</span>
+                <strong>{{ behavior.common_locations|join(', ') if behavior.common_locations else 'N/A' }}</strong>
+            </div>
+            <div>
+                <span>Active hours</span>
+                <strong>{{ behavior.active_hours }}</strong>
+            </div>
+            <div>
+                <span>Last seen</span>
+                <strong>{{ behavior.last_seen }}</strong>
+            </div>
+        </div>
+    </section>
+    <section class="panel compact-panel">
+        <div class="panel-header">
+            <h2>Recent transaction history</h2>
+            <p>Your latest scored transactions appear here automatically.</p>
+        </div>
+        <div class="table-wrapper">
+            <table class="data-table" id="recent-transaction-table">
+                <thead>
+                    <tr>
+                        <th>Date & time</th>
+                        <th>Amount</th>
+                        <th>Prediction</th>
+                        <th>Risk score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in recent_rows %}
+                    <tr>
+                        <td>{{ row.created_at.replace('T', ' ')[:19] }}</td>
+                        <td>₹{{ '{:,.0f}'.format(row.amount) }}</td>
+                        <td><span class="pill {{ 'pill-danger' if row.prediction == 'Fraud' else 'pill-success' }}">{{ row.prediction }}</span></td>
+                        <td>{{ row.risk_score }}%</td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="4">No transactions yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+{% endblock %}
